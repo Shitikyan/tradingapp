@@ -1,0 +1,49 @@
+﻿<UserControl x:Class="TradeApp.View.ControlView"
+	            xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	            xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	            xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	            xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                xmlns:converter="clr-namespace:TradeApp.Converter"
+	            mc:Ignorable="d" Width="225" Height="360">
+    <Grid HorizontalAlignment="Stretch" MinHeight="272" VerticalAlignment="Stretch" Margin="0,0,10,0">
+        <Grid.Resources>
+            <converter:InverseBooleanConverter x:Key="inverseBooleanConverter"/>
+        </Grid.Resources>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="50*"/>
+            <ColumnDefinition Width="50*"/>
+        </Grid.ColumnDefinitions>
+
+        <Label Content="Exchange:"   FontWeight="Bold" VerticalAlignment="Center"/>
+        <ComboBox Grid.Column="1" ItemsSource="{Binding ExchangeClients}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedExchangeClient, Mode=TwoWay}" IsEnabled="{Binding Busy, Converter={StaticResource inverseBooleanConverter}}" Width="100" Margin="3" VerticalAlignment="Center"/>
+        <Label Content="Intervals:"  Grid.Row="1"   FontWeight="Bold" VerticalAlignment="Center"/>
+        <TextBox  Grid.Row="2" Grid.Column="1" Height="23"  TextWrapping="Wrap" Text="{Binding TimeIntervalValue}" IsReadOnly="{Binding Busy}"  Width="100" VerticalAlignment="Center"/>
+        <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{Binding IntervalList}" DisplayMemberPath="ValueTimeIntervalTypeString" SelectedItem="{Binding CurrentTimeIntervalType, Mode=TwoWay}" IsEnabled="{Binding Busy, Converter={StaticResource inverseBooleanConverter}}" Width="100" Margin="3" VerticalAlignment="Center"/>
+        <Label Grid.Row="3" Content="WMA period:"  FontWeight="Bold" VerticalAlignment="Center"/>
+        <TextBox Grid.Row="3" Grid.Column="1"  Height="23" TextWrapping="Wrap" Text="{Binding WmaPeriod}" IsReadOnly="{Binding Busy}"  Width="100" VerticalAlignment="Center"/>
+        <Label Grid.Row="4" Content="NN Interval:" FontWeight="Bold" VerticalAlignment="Center"/>
+        <TextBox Grid.Row="4" Grid.Column="1"  Height="23" TextWrapping="Wrap" Text="{Binding NNInterval}" IsReadOnly="{Binding Busy}"  Width="100" VerticalAlignment="Center"/>
+        <Label Grid.Row="5" Content="Position size:" FontWeight="Bold" VerticalAlignment="Center"/>
+        <TextBox Grid.Row="5" Grid.Column="1" Height="23" TextWrapping="Wrap" Text="{Binding PositionOpeningCost}" IsReadOnly="{Binding Busy}" Width="100" VerticalAlignment="Center"/>
+        
+
+
+        <CheckBox Grid.Row="6" Grid.ColumnSpan="2" Content="Enable Orders" IsChecked="{Binding EnableOrders, Mode=TwoWay}" IsEnabled="{Binding CanChangeEnableOrders}" VerticalAlignment="Center" Margin="5"/>
+        <Button Grid.Row="7" Grid.ColumnSpan="2" Content="START" Command="{Binding StartCommand}"  Width="178" Margin="3"/>
+        <Button Grid.Row="8" Grid.ColumnSpan="2" Content="STOP" Command="{Binding StopCommand}"  Width="178" Margin="3"/>
+
+
+    </Grid>
+
+</UserControl>

@@ -1,0 +1,438 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="TradingAppDBModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="CandleSticks">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="OpenTime" Type="datetimeoffset" Precision="7" Nullable="false" />
+          <Property Name="CloseTime" Type="datetimeoffset" Precision="7" Nullable="false" />
+          <Property Name="Open" Type="decimal" Precision="18" Scale="4" Nullable="false" />
+          <Property Name="High" Type="decimal" Precision="18" Scale="4" Nullable="false" />
+          <Property Name="Low" Type="decimal" Precision="18" Scale="4" Nullable="false" />
+          <Property Name="Close" Type="decimal" Precision="18" Scale="4" Nullable="false" />
+          <Property Name="WMAPeriod" Type="decimal" Precision="18" Scale="4" Nullable="false" />
+          <Property Name="WMAValue" Type="decimal" Precision="18" Scale="4" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Confirmations">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Date" Type="datetimeoffset" Precision="7" Nullable="false" />
+          <Property Name="Signal" Type="decimal" Precision="18" Scale="4" Nullable="false" />
+          <Property Name="CandleStickId" Type="int" Nullable="false" />
+          <Property Name="SetupId" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Orders">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Pair" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Type" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="OrderType" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Price" Type="decimal" Precision="18" Scale="4" />
+          <Property Name="Price2" Type="decimal" Precision="18" Scale="4" />
+          <Property Name="Volume" Type="decimal" Precision="18" Scale="4" Nullable="false" />
+          <Property Name="Leverage" Type="nvarchar" MaxLength="50" />
+          <Property Name="Position" Type="nvarchar" MaxLength="500" />
+          <Property Name="OFlags" Type="nvarchar" MaxLength="500" />
+          <Property Name="Starttm" Type="nvarchar" MaxLength="50" />
+          <Property Name="Expiretm" Type="nvarchar" MaxLength="50" />
+          <Property Name="UserRef" Type="nvarchar" MaxLength="100" />
+          <Property Name="Validate" Type="bit" Nullable="false" />
+          <Property Name="TxId" Type="nvarchar" MaxLength="50" />
+          <Property Name="Status" Type="nvarchar" MaxLength="50" />
+          <Property Name="Reason" Type="nvarchar" MaxLength="100" />
+          <Property Name="OpenTime" Type="nvarchar" MaxLength="50" />
+          <Property Name="CloseTime" Type="nvarchar" MaxLength="50" />
+          <Property Name="VolumeExecuted" Type="decimal" Precision="18" Scale="4" />
+          <Property Name="Cost" Type="decimal" Precision="18" Scale="4" />
+          <Property Name="Fee" Type="decimal" Precision="18" Scale="4" />
+          <Property Name="AveragePrice" Type="decimal" Precision="18" Scale="4" />
+          <Property Name="StopPrice" Type="decimal" Precision="18" Scale="4" />
+          <Property Name="LimitPrice" Type="decimal" Precision="18" Scale="4" />
+          <Property Name="Info" Type="nvarchar" MaxLength="500" />
+          <Property Name="Trades" Type="nvarchar" MaxLength="500" />
+          <Property Name="CandleStickId" Type="int" />
+          <Property Name="ConfirmationId" Type="int" />
+          <Property Name="ConditionalCloseString" Type="nvarchar" MaxLength="250" />
+          <Property Name="CreateDate" Type="datetimeoffset" Precision="7" />
+        </EntityType>
+        <EntityType Name="Setups">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Date" Type="datetimeoffset" Precision="7" Nullable="false" />
+          <Property Name="Type" Type="int" Nullable="false" />
+          <Property Name="Target" Type="decimal" Precision="18" Scale="4" Nullable="false" />
+          <Property Name="CandleStickId" Type="int" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_Confirmation_CandleStick">
+          <End Role="CandleSticks" Type="Self.CandleSticks" Multiplicity="1" />
+          <End Role="Confirmations" Type="Self.Confirmations" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="CandleSticks">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Confirmations">
+              <PropertyRef Name="CandleStickId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Confirmation_Confirmation">
+          <End Role="Confirmations" Type="Self.Confirmations" Multiplicity="0..1" />
+          <End Role="Orders" Type="Self.Orders" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Confirmations">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Orders">
+              <PropertyRef Name="ConfirmationId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Confirmation_Setup">
+          <End Role="Setups" Type="Self.Setups" Multiplicity="1" />
+          <End Role="Confirmations" Type="Self.Confirmations" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Setups">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Confirmations">
+              <PropertyRef Name="SetupId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Order_CandleStick">
+          <End Role="CandleSticks" Type="Self.CandleSticks" Multiplicity="0..1" />
+          <End Role="Orders" Type="Self.Orders" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="CandleSticks">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Orders">
+              <PropertyRef Name="CandleStickId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Setup_CandleStick">
+          <End Role="CandleSticks" Type="Self.CandleSticks" Multiplicity="1" />
+          <End Role="Setups" Type="Self.Setups" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="CandleSticks">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Setups">
+              <PropertyRef Name="CandleStickId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="TradingAppDBModelStoreContainer">
+          <EntitySet Name="CandleSticks" EntityType="Self.CandleSticks" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Confirmations" EntityType="Self.Confirmations" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Orders" EntityType="Self.Orders" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Setups" EntityType="Self.Setups" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_Confirmation_CandleStick" Association="Self.FK_Confirmation_CandleStick">
+            <End Role="CandleSticks" EntitySet="CandleSticks" />
+            <End Role="Confirmations" EntitySet="Confirmations" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Confirmation_Confirmation" Association="Self.FK_Confirmation_Confirmation">
+            <End Role="Confirmations" EntitySet="Confirmations" />
+            <End Role="Orders" EntitySet="Orders" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Confirmation_Setup" Association="Self.FK_Confirmation_Setup">
+            <End Role="Setups" EntitySet="Setups" />
+            <End Role="Confirmations" EntitySet="Confirmations" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Order_CandleStick" Association="Self.FK_Order_CandleStick">
+            <End Role="CandleSticks" EntitySet="CandleSticks" />
+            <End Role="Orders" EntitySet="Orders" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Setup_CandleStick" Association="Self.FK_Setup_CandleStick">
+            <End Role="CandleSticks" EntitySet="CandleSticks" />
+            <End Role="Setups" EntitySet="Setups" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="TradingAppDBModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="CandleSticks">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="OpenTime" Type="DateTimeOffset" Nullable="false" Precision="7" />
+          <Property Name="CloseTime" Type="DateTimeOffset" Nullable="false" Precision="7" />
+          <Property Name="Open" Type="Decimal" Precision="18" Scale="4" Nullable="false" />
+          <Property Name="High" Type="Decimal" Precision="18" Scale="4" Nullable="false" />
+          <Property Name="Low" Type="Decimal" Precision="18" Scale="4" Nullable="false" />
+          <Property Name="Close" Type="Decimal" Precision="18" Scale="4" Nullable="false" />
+          <Property Name="WMAPeriod" Type="Decimal" Precision="18" Scale="4" Nullable="false" />
+          <Property Name="WMAValue" Type="Decimal" Precision="18" Scale="4" Nullable="false" />
+          <NavigationProperty Name="Confirmations" Relationship="Self.FK_Confirmation_CandleStick" FromRole="CandleSticks" ToRole="Confirmations" />
+          <NavigationProperty Name="Orders" Relationship="Self.FK_Order_CandleStick" FromRole="CandleSticks" ToRole="Orders" />
+          <NavigationProperty Name="Setups" Relationship="Self.FK_Setup_CandleStick" FromRole="CandleSticks" ToRole="Setups" />
+        </EntityType>
+        <EntityType Name="Confirmations">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Date" Type="DateTimeOffset" Nullable="false" Precision="7" />
+          <Property Name="Signal" Type="Decimal" Precision="18" Scale="4" Nullable="false" />
+          <Property Name="CandleStickId" Type="Int32" Nullable="false" />
+          <Property Name="SetupId" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="CandleSticks" Relationship="Self.FK_Confirmation_CandleStick" FromRole="Confirmations" ToRole="CandleSticks" />
+          <NavigationProperty Name="Orders" Relationship="Self.FK_Confirmation_Confirmation" FromRole="Confirmations" ToRole="Orders" />
+          <NavigationProperty Name="Setups" Relationship="Self.FK_Confirmation_Setup" FromRole="Confirmations" ToRole="Setups" />
+        </EntityType>
+        <EntityType Name="Orders">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Pair" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Type" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="OrderType" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Price" Type="Decimal" Precision="18" Scale="4" />
+          <Property Name="Price2" Type="Decimal" Precision="18" Scale="4" />
+          <Property Name="Volume" Type="Decimal" Precision="18" Scale="4" Nullable="false" />
+          <Property Name="Leverage" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Position" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="OFlags" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="Starttm" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Expiretm" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="UserRef" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Validate" Type="Boolean" Nullable="false" />
+          <Property Name="TxId" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Status" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Reason" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="OpenTime" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="CloseTime" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="VolumeExecuted" Type="Decimal" Precision="18" Scale="4" />
+          <Property Name="Cost" Type="Decimal" Precision="18" Scale="4" />
+          <Property Name="Fee" Type="Decimal" Precision="18" Scale="4" />
+          <Property Name="AveragePrice" Type="Decimal" Precision="18" Scale="4" />
+          <Property Name="StopPrice" Type="Decimal" Precision="18" Scale="4" />
+          <Property Name="LimitPrice" Type="Decimal" Precision="18" Scale="4" />
+          <Property Name="Info" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="Trades" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="CandleStickId" Type="Int32" />
+          <Property Name="ConfirmationId" Type="Int32" />
+          <Property Name="ConditionalCloseString" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="CreateDate" Type="DateTimeOffset" Precision="7" />
+          <NavigationProperty Name="CandleSticks" Relationship="Self.FK_Order_CandleStick" FromRole="Orders" ToRole="CandleSticks" />
+          <NavigationProperty Name="Confirmations" Relationship="Self.FK_Confirmation_Confirmation" FromRole="Orders" ToRole="Confirmations" />
+        </EntityType>
+        <EntityType Name="Setups">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Date" Type="DateTimeOffset" Nullable="false" Precision="7" />
+          <Property Name="Type" Type="Int32" Nullable="false" />
+          <Property Name="Target" Type="Decimal" Precision="18" Scale="4" Nullable="false" />
+          <Property Name="CandleStickId" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="CandleSticks" Relationship="Self.FK_Setup_CandleStick" FromRole="Setups" ToRole="CandleSticks" />
+          <NavigationProperty Name="Confirmations" Relationship="Self.FK_Confirmation_Setup" FromRole="Setups" ToRole="Confirmations" />
+        </EntityType>
+        <Association Name="FK_Confirmation_CandleStick">
+          <End Role="CandleSticks" Type="Self.CandleSticks" Multiplicity="1" />
+          <End Role="Confirmations" Type="Self.Confirmations" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="CandleSticks">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Confirmations">
+              <PropertyRef Name="CandleStickId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Order_CandleStick">
+          <End Role="CandleSticks" Type="Self.CandleSticks" Multiplicity="0..1" />
+          <End Role="Orders" Type="Self.Orders" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="CandleSticks">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Orders">
+              <PropertyRef Name="CandleStickId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Setup_CandleStick">
+          <End Role="CandleSticks" Type="Self.CandleSticks" Multiplicity="1" />
+          <End Role="Setups" Type="Self.Setups" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="CandleSticks">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Setups">
+              <PropertyRef Name="CandleStickId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Confirmation_Confirmation">
+          <End Role="Confirmations" Type="Self.Confirmations" Multiplicity="0..1" />
+          <End Role="Orders" Type="Self.Orders" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Confirmations">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Orders">
+              <PropertyRef Name="ConfirmationId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Confirmation_Setup">
+          <End Role="Setups" Type="Self.Setups" Multiplicity="1" />
+          <End Role="Confirmations" Type="Self.Confirmations" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Setups">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Confirmations">
+              <PropertyRef Name="SetupId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="TradingAppDBEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="CandleSticks" EntityType="Self.CandleSticks" />
+          <EntitySet Name="Confirmations" EntityType="Self.Confirmations" />
+          <EntitySet Name="Orders" EntityType="Self.Orders" />
+          <EntitySet Name="Setups" EntityType="Self.Setups" />
+          <AssociationSet Name="FK_Confirmation_CandleStick" Association="Self.FK_Confirmation_CandleStick">
+            <End Role="CandleSticks" EntitySet="CandleSticks" />
+            <End Role="Confirmations" EntitySet="Confirmations" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Order_CandleStick" Association="Self.FK_Order_CandleStick">
+            <End Role="CandleSticks" EntitySet="CandleSticks" />
+            <End Role="Orders" EntitySet="Orders" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Setup_CandleStick" Association="Self.FK_Setup_CandleStick">
+            <End Role="CandleSticks" EntitySet="CandleSticks" />
+            <End Role="Setups" EntitySet="Setups" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Confirmation_Confirmation" Association="Self.FK_Confirmation_Confirmation">
+            <End Role="Confirmations" EntitySet="Confirmations" />
+            <End Role="Orders" EntitySet="Orders" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Confirmation_Setup" Association="Self.FK_Confirmation_Setup">
+            <End Role="Setups" EntitySet="Setups" />
+            <End Role="Confirmations" EntitySet="Confirmations" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="TradingAppDBModelStoreContainer" CdmEntityContainer="TradingAppDBEntities">
+          <EntitySetMapping Name="CandleSticks">
+            <EntityTypeMapping TypeName="TradingAppDBModel.CandleSticks">
+              <MappingFragment StoreEntitySet="CandleSticks">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="OpenTime" ColumnName="OpenTime" />
+                <ScalarProperty Name="CloseTime" ColumnName="CloseTime" />
+                <ScalarProperty Name="Open" ColumnName="Open" />
+                <ScalarProperty Name="High" ColumnName="High" />
+                <ScalarProperty Name="Low" ColumnName="Low" />
+                <ScalarProperty Name="Close" ColumnName="Close" />
+                <ScalarProperty Name="WMAPeriod" ColumnName="WMAPeriod" />
+                <ScalarProperty Name="WMAValue" ColumnName="WMAValue" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Confirmations">
+            <EntityTypeMapping TypeName="TradingAppDBModel.Confirmations">
+              <MappingFragment StoreEntitySet="Confirmations">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Date" ColumnName="Date" />
+                <ScalarProperty Name="Signal" ColumnName="Signal" />
+                <ScalarProperty Name="CandleStickId" ColumnName="CandleStickId" />
+                <ScalarProperty Name="SetupId" ColumnName="SetupId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Orders">
+            <EntityTypeMapping TypeName="TradingAppDBModel.Orders">
+              <MappingFragment StoreEntitySet="Orders">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Pair" ColumnName="Pair" />
+                <ScalarProperty Name="Type" ColumnName="Type" />
+                <ScalarProperty Name="OrderType" ColumnName="OrderType" />
+                <ScalarProperty Name="Price" ColumnName="Price" />
+                <ScalarProperty Name="Price2" ColumnName="Price2" />
+                <ScalarProperty Name="Volume" ColumnName="Volume" />
+                <ScalarProperty Name="Leverage" ColumnName="Leverage" />
+                <ScalarProperty Name="Position" ColumnName="Position" />
+                <ScalarProperty Name="OFlags" ColumnName="OFlags" />
+                <ScalarProperty Name="Starttm" ColumnName="Starttm" />
+                <ScalarProperty Name="Expiretm" ColumnName="Expiretm" />
+                <ScalarProperty Name="UserRef" ColumnName="UserRef" />
+                <ScalarProperty Name="Validate" ColumnName="Validate" />
+                <ScalarProperty Name="TxId" ColumnName="TxId" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="Reason" ColumnName="Reason" />
+                <ScalarProperty Name="OpenTime" ColumnName="OpenTime" />
+                <ScalarProperty Name="CloseTime" ColumnName="CloseTime" />
+                <ScalarProperty Name="VolumeExecuted" ColumnName="VolumeExecuted" />
+                <ScalarProperty Name="Cost" ColumnName="Cost" />
+                <ScalarProperty Name="Fee" ColumnName="Fee" />
+                <ScalarProperty Name="AveragePrice" ColumnName="AveragePrice" />
+                <ScalarProperty Name="StopPrice" ColumnName="StopPrice" />
+                <ScalarProperty Name="LimitPrice" ColumnName="LimitPrice" />
+                <ScalarProperty Name="Info" ColumnName="Info" />
+                <ScalarProperty Name="Trades" ColumnName="Trades" />
+                <ScalarProperty Name="CandleStickId" ColumnName="CandleStickId" />
+                <ScalarProperty Name="ConfirmationId" ColumnName="ConfirmationId" />
+                <ScalarProperty Name="ConditionalCloseString" ColumnName="ConditionalCloseString" />
+                <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Setups">
+            <EntityTypeMapping TypeName="TradingAppDBModel.Setups">
+              <MappingFragment StoreEntitySet="Setups">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Date" ColumnName="Date" />
+                <ScalarProperty Name="Type" ColumnName="Type" />
+                <ScalarProperty Name="Target" ColumnName="Target" />
+                <ScalarProperty Name="CandleStickId" ColumnName="CandleStickId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="false" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

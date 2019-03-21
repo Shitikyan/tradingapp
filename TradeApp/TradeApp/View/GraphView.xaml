@@ -1,0 +1,52 @@
+﻿<UserControl x:Class="TradeApp.View.GraphView"
+	        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+            xmlns:ddd="http://research.microsoft.com/DynamicDataDisplay/1.1"
+	        mc:Ignorable="d" >
+    
+    <Grid>
+        <Grid.Resources>
+            <ddd:TickToDateLabelProvider x:Key="tickToDate"/>
+            <ddd:MultiChartSynchronizer x:Key="mainSynchro"/>
+        </Grid.Resources>
+        <ddd:ChartPlotter x:Name="price" ddd:SynchroVisible.Axis="X" ddd:SynchroVisible.Using="{StaticResource mainSynchro}"    LegendVisibility="Hidden" NewLegendVisible="False" Margin="0,0,10,10" >
+            <ddd:ChartPlotter.Resources>
+                <Pen x:Key="pen" Brush="Black" Thickness="2"/>
+                <Pen x:Key="boundPen" Brush="Red" Thickness="2"/>
+            </ddd:ChartPlotter.Resources>
+            <ddd:VerticalAxisTitle>Price</ddd:VerticalAxisTitle>
+            <ddd:WidthSpring SourcePanel="{Binding LeftPanel, ElementName=volume}"/>
+            <ddd:MarkerPointsGraph DataSource="{Binding PriceDS}"  >
+                <ddd:MarkerPointsGraph.Marker>
+                    <ddd:CandleStickPointMarker CandelstickWidth="6" WhiteCandleFill="Azure" BlackCandleFill="DarkBlue">
+                        
+                    </ddd:CandleStickPointMarker>
+                </ddd:MarkerPointsGraph.Marker>
+            </ddd:MarkerPointsGraph>
+            <ddd:LineGraph LinePen="{StaticResource pen}" DataSource="{Binding WmaDS}">
+                <ddd:LineGraph.Description>
+                    <ddd:PenDescription DescriptionString="WMA" >
+                    </ddd:PenDescription>
+                </ddd:LineGraph.Description>
+            </ddd:LineGraph>
+            <ddd:LineGraph LinePen="{StaticResource boundPen}" DataSource="{Binding HighBoundDS}">
+                <ddd:LineGraph.Description>
+                    <ddd:PenDescription DescriptionString="HighBound" >
+                    </ddd:PenDescription>
+                </ddd:LineGraph.Description>
+            </ddd:LineGraph>
+            <ddd:LineGraph LinePen="{StaticResource boundPen}" DataSource="{Binding LowBoundDS}">
+                <ddd:LineGraph.Description>
+                    <ddd:PenDescription DescriptionString="LowBound" >
+                    </ddd:PenDescription>
+                </ddd:LineGraph.Description>
+            </ddd:LineGraph>            
+            <ddd:ChartPlotter.MainHorizontalAxis>
+                <ddd:NumericAxis LabelProvider="{StaticResource tickToDate}"/>
+            </ddd:ChartPlotter.MainHorizontalAxis>
+
+        </ddd:ChartPlotter>
+    </Grid>
+</UserControl>

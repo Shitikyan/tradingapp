@@ -35,8 +35,44 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="DynamicDataDisplay, Version=0.4.0.0, Culture=neutral, PublicKeyToken=5b7d744a7263923f, processorArchitecture=MSIL">
+      <HintPath>..\packages\DynamicDataDisplayWpf.0.4.0\lib\DynamicDataDisplay.dll</HintPath>
+    </Reference>
+    <Reference Include="DynamicDataDisplay.Maps, Version=0.1.0.0, Culture=neutral, PublicKeyToken=5b7d744a7263923f, processorArchitecture=MSIL">
+      <HintPath>..\packages\DynamicDataDisplayWpf.0.4.0\lib\DynamicDataDisplay.Maps.dll</HintPath>
+    </Reference>
+    <Reference Include="DynamicDataDisplay.Markers, Version=1.0.0.0, Culture=neutral, PublicKeyToken=5b7d744a7263923f, processorArchitecture=MSIL">
+      <HintPath>..\packages\DynamicDataDisplayWpf.0.4.0\lib\DynamicDataDisplay.Markers.dll</HintPath>
+    </Reference>
+    <Reference Include="DynamicDataDisplay.Markers2, Version=1.0.0.0, Culture=neutral, PublicKeyToken=5b7d744a7263923f, processorArchitecture=MSIL">
+      <HintPath>..\packages\DynamicDataDisplayWpf.0.4.0\lib\DynamicDataDisplay.Markers2.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="Jayrock, Version=0.9.16530.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\jayrock.0.9.16530.1\lib\net40\Jayrock.dll</HintPath>
+    </Reference>
+    <Reference Include="Jayrock.Json, Version=0.9.16530.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\jayrock-json.0.9.16530.1\lib\net40\Jayrock.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <HintPath>..\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="Parser, Version=1.0.0.0, Culture=neutral, PublicKeyToken=5b7d744a7263923f, processorArchitecture=MSIL">
+      <HintPath>..\packages\DynamicDataDisplayWpf.0.4.0\lib\Parser.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -55,20 +91,134 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="DataAccess\CandleSticks.cs">
+      <DependentUpon>TradingAppDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DataAccess\Confirmations.cs">
+      <DependentUpon>TradingAppDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DataAccess\Orders.cs">
+      <DependentUpon>TradingAppDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DataAccess\Setups.cs">
+      <DependentUpon>TradingAppDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DataAccess\TradingAppDB.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>TradingAppDB.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DataAccess\TradingAppDB.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>TradingAppDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DataAccess\TradingAppDB.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>TradingAppDB.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="RateGate.cs" />
+    <Compile Include="Reference.cs" />
+    <Compile Include="Service\BrokerageService.cs" />
+    <Compile Include="Service\QuoteService.cs" />
+    <Compile Include="Service\ServiceBase.cs" />
+    <Compile Include="Service\StrategyService.cs" />
+    <Compile Include="ViewModel\ControlViewViewModel.cs" />
+    <Compile Include="ViewModel\GraphViewViewModel.cs" />
+    <Compile Include="ViewModel\LogViewViewModel.cs" />
+    <Compile Include="ViewModel\MainWindowViewModel.cs" />
+    <Compile Include="ViewModel\PanelViewViewModel.cs" />
+    <Compile Include="ViewModel\PositionViewViewModel.cs" />
+    <Compile Include="View\ControlView.xaml.cs" />
+    <Compile Include="View\GraphView.xaml.cs" />
+    <Compile Include="View\LogView.xaml.cs" />
+    <Compile Include="View\PanelView.xaml.cs" />
+    <Compile Include="View\PositionView.xaml.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Compile Include="ApiClient\ExchangeClientBase.cs" />
+    <Compile Include="ApiClient\IExchangeClient.cs" />
+    <Compile Include="ApiClient\KrakenClient.cs" />
+    <Compile Include="ApiClient\KrakenClientMock.cs" />
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Converter\InverseBooleanConverter.cs" />
+    <Compile Include="Converter\OrderTypeToStringConverter.cs" />
+    <Compile Include="Converter\SetupTypeConverter.cs" />
+    <Compile Include="Converter\UnixTimeConverter.cs" />
+    <Compile Include="DataAccess\Entities\CandleSticks.cs" />
+    <Compile Include="DataAccess\Entities\Confirmation.cs" />
+    <Compile Include="DataAccess\Entities\Order.cs" />
+    <Compile Include="DataAccess\Entities\Position.cs" />
+    <Compile Include="DataAccess\Entities\Setup.cs" />
+    <Compile Include="DataAccess\Factories\OrderFactory.cs" />
+    <Compile Include="DataAccess\Interfaces\ICandleStickRepository.cs" />
+    <Compile Include="DataAccess\Interfaces\IConfirmationRepository.cs" />
+    <Compile Include="DataAccess\Interfaces\IOrderRepository.cs" />
+    <Compile Include="DataAccess\Interfaces\IRepositoryMetadata.cs" />
+    <Compile Include="DataAccess\Interfaces\ISetupRepository.cs" />
+    <Compile Include="DataAccess\Repositories\CandleStickRepository.cs" />
+    <Compile Include="DataAccess\Repositories\ConfirmationRepository.cs" />
+    <Compile Include="DataAccess\Repositories\MockRepositories.cs" />
+    <Compile Include="DataAccess\Repositories\OrderRepository.cs" />
+    <Compile Include="DataAccess\Repositories\SetupRepository.cs" />
+    <Compile Include="Helper\ExceptionHelper.cs" />
+    <Compile Include="Helper\Helper.cs" />
+    <Compile Include="Infrastructure\Behavior\AttachedBehavior.cs" />
+    <Compile Include="Infrastructure\Behavior\IBehavior.cs" />
+    <Compile Include="Infrastructure\Mediator\Mediator.cs" />
+    <Compile Include="Infrastructure\Mediator\MediatorMessageSinkAttribute.cs" />
+    <Compile Include="Infrastructure\Mediator\MessageToActionMap.cs" />
+    <Compile Include="Infrastructure\Mediator\WeakAction.cs" />
+    <Compile Include="Infrastructure\MEFLoader.cs" />
+    <Compile Include="Infrastructure\Model\TimeInterval.cs" />
+    <Compile Include="Infrastructure\ObservableObject.cs" />
+    <Compile Include="Infrastructure\RelayCommand.cs" />
+    <Compile Include="Infrastructure\ViewModel\IViewModel.cs" />
+    <Compile Include="Infrastructure\ViewModel\ViewModelBase.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="View\ControlView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\GraphView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\LogView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\PanelView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\PositionView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Messaging\MediatorMessages.cs" />
+    <Compile Include="Messaging\OpenPositionData.cs" />
+    <Compile Include="Messaging\PriceData.cs" />
+    <Compile Include="Messaging\ShiftPositionLimitsData.cs" />
+    <Compile Include="Messaging\SomeData.cs" />
+    <Compile Include="Model\CancelOrderResult.cs" />
+    <Compile Include="Model\FixedSizedQueue.cs" />
+    <Compile Include="Model\GetCandleStickResult.cs" />
+    <Compile Include="Model\LogEntry.cs" />
+    <Compile Include="Model\PlaceOrderResult.cs" />
+    <Compile Include="Model\PricePoint.cs" />
+    <Compile Include="Model\RefreshOrderResult.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -86,6 +236,14 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EntityDeploy Include="DataAccess\TradingAppDB.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>TradingAppDB.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <None Include="DataAccess\TradingAppDB.edmx.diagram">
+      <DependentUpon>TradingAppDB.edmx</DependentUpon>
+    </None>
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -95,8 +253,22 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="ApiClient\" />
-    <Folder Include="Converter\" />
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="DataAccess\TradingAppDB.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>TradingAppDB.edmx</DependentUpon>
+      <LastGenOutput>TradingAppDB.Context.cs</LastGenOutput>
+    </Content>
+    <Content Include="DataAccess\TradingAppDB.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>TradingAppDB.edmx</DependentUpon>
+      <LastGenOutput>TradingAppDB.cs</LastGenOutput>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
