@@ -1,2 +1,1 @@
-# tradingapp
-Trading app
+#Trading App with WPF and EF
