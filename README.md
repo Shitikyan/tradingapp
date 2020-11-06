@@ -1,1 +1,1 @@
-Trading App with WPF and EF
+# Trading App with WPF and EF
