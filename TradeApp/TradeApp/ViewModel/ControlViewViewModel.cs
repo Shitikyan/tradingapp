@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using TradeApp.ApiClient;
 using TradeApp.Infrastructure;
@@ -23,7 +19,7 @@ namespace TradeApp.ViewModel
         public ControlViewViewModel()
         {
             Mediator.Register(this);
-            
+
 
             MEFLoader loader = new MEFLoader();
 
@@ -38,7 +34,7 @@ namespace TradeApp.ViewModel
                 new TimeIntervalTypeItem(){ValueTimeIntervalTypeEnum=TimeIntervals.Hour,ValueTimeIntervalTypeString="Hour"},
                 new TimeIntervalTypeItem(){ValueTimeIntervalTypeEnum=TimeIntervals.Day,ValueTimeIntervalTypeString="Day"},
             };
-            
+
             CurrentTimeIntervalType = IntervalList.Where(i => i.ValueTimeIntervalTypeEnum == TimeIntervals.Minute).FirstOrDefault();
             TimeIntervalValue = 5;
             WmaPeriod = 180;
@@ -46,13 +42,13 @@ namespace TradeApp.ViewModel
             PositionOpeningCost = 10;
 
             BroadcastConfiguration();
-            
+
         }
 
         #region Properties
 
-        public IEnumerable<IExchangeClient> ExchangeClients {get;set;}
-       
+        public IEnumerable<IExchangeClient> ExchangeClients { get; set; }
+
         IExchangeClient _selectedExchangeClient;
         public IExchangeClient SelectedExchangeClient
         {
@@ -84,7 +80,7 @@ namespace TradeApp.ViewModel
             }
             set
             {
-                OldTimeIntervalType = currentTimeIntervalType;                
+                OldTimeIntervalType = currentTimeIntervalType;
                 currentTimeIntervalType = value;
 
                 //notify colleagues
@@ -93,7 +89,7 @@ namespace TradeApp.ViewModel
                 base.RaisePropertyChanged(() => this.CurrentTimeIntervalType);
             }
         }
-        
+
         public int OldTimeIntervalValue { get; set; }
         int timeIntervalValue;
         public int TimeIntervalValue
@@ -170,7 +166,7 @@ namespace TradeApp.ViewModel
             }
 
         }
-        
+
         public bool OldEnableOrders { get; set; }
         bool enableOrders;
         public bool EnableOrders
@@ -195,16 +191,16 @@ namespace TradeApp.ViewModel
         bool canChangeEnableOrders;
         public bool CanChangeEnableOrders
         {
-            get 
+            get
             {
-                return canChangeEnableOrders;            
+                return canChangeEnableOrders;
             }
             set
             {
                 canChangeEnableOrders = value;
 
                 base.RaisePropertyChanged(() => this.CanChangeEnableOrders);
-            }       
+            }
         }
 
         bool canChangeExchange;
@@ -223,7 +219,7 @@ namespace TradeApp.ViewModel
         }
 
         bool busy;
-        public bool Busy 
+        public bool Busy
         {
             get
             {
@@ -232,7 +228,7 @@ namespace TradeApp.ViewModel
             set
             {
                 busy = value;
-                
+
                 base.RaisePropertyChanged(() => this.Busy);
             }
         }
@@ -241,7 +237,7 @@ namespace TradeApp.ViewModel
 
 
         #endregion
-        
+
         #region Commands
 
         RelayCommand _startCommand;
@@ -269,24 +265,24 @@ namespace TradeApp.ViewModel
                 return _stopCommand;
             }
         }
-        
+
         #endregion
-        
+
         #region Methods
 
         public void InitializeServices()
         {
-            if (_quoteService == null) 
+            if (_quoteService == null)
                 _quoteService = new QuoteService(SelectedExchangeClient);
-            else 
+            else
                 _quoteService.Client = SelectedExchangeClient;
-            
-            if (_strategyService == null) 
+
+            if (_strategyService == null)
                 _strategyService = new StrategyService();
-            
-            if (_brokerageService == null) 
+
+            if (_brokerageService == null)
                 _brokerageService = new BrokerageService(SelectedExchangeClient);
-            else 
+            else
                 _brokerageService.Client = SelectedExchangeClient;
 
         }
@@ -305,17 +301,17 @@ namespace TradeApp.ViewModel
 
             EnableOrders = false;
             CanChangeEnableOrders = false;
-            
-            Mediator.NotifyColleagues<string>(MediatorMessages.CatchUpWithConnector, "yo");
-            
 
-            
+            Mediator.NotifyColleagues<string>(MediatorMessages.CatchUpWithConnector, "yo");
+
+
+
         }
 
         public void StartQuoteBot()
         {
             Mediator.NotifyColleagues<string>(MediatorMessages.StartQuoteBot, "yo");
-            
+
             EnableOrders = OldEnableOrders;
             CanChangeEnableOrders = true;
             CanChangeExchange = false;
@@ -328,7 +324,7 @@ namespace TradeApp.ViewModel
 
             Busy = false;
 
-           //when the brokerage service informs of position closed, we will set can change exchange
+            //when the brokerage service informs of position closed, we will set can change exchange
         }
 
         public void BroadcastConfiguration()
@@ -338,8 +334,8 @@ namespace TradeApp.ViewModel
             Mediator.NotifyColleagues<int>(MediatorMessages.WmaPeriodChanged, wmaPeriod);
             Mediator.NotifyColleagues<decimal>(MediatorMessages.NNIntervalChanged, nnInterval);
             Mediator.NotifyColleagues<decimal>(MediatorMessages.PositionOpeningCostChanged, posSize);
-        } 
-        
+        }
+
         #endregion
 
         #region Predicates
@@ -354,7 +350,7 @@ namespace TradeApp.ViewModel
             return Busy;
         }
 
-              
+
         #endregion
 
         #region Message Handlers

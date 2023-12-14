@@ -1,13 +1,10 @@
-﻿using Jayrock.Json;
-using log4net;
+﻿using log4net;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Configuration;
 using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using TradeApp.ConnectorService;
 using TradeApp.DataAccess;
 using TradeApp.Model;
@@ -20,7 +17,7 @@ namespace TradeApp.ApiClient
         ILog _logger;
         int _maxRetries;
         private System.Timers.Timer _timer;
-        
+
         decimal[] _weekDayCountAverages;
         decimal[] _weekEndCountAverages;
         decimal[] _weekDayVolumeAverages;
@@ -37,7 +34,7 @@ namespace TradeApp.ApiClient
         static Random _rnd;
         static Random Rnd
         {
-            get 
+            get
             {
                 if (_rnd == null)
                     _rnd = new Random();
@@ -154,7 +151,7 @@ namespace TradeApp.ApiClient
         public IList<PricePoint> CatchUp()
         {
             var start = (DateTimeOffset.Now).Subtract(new TimeSpan(30, 0, 0, 0));
-            
+
             var pricePoints = new List<PricePoint>();
 
             DateTimeOffset time = start;
@@ -196,7 +193,6 @@ namespace TradeApp.ApiClient
                 //dt
                 decimal dt = (decimal)hoursToNextTrade / (24 * 365);
 
-
                 price = oldPrice * (1 + mu * dt + sigma * (decimal)Math.Sqrt((double)dt) * StandardNormal(Rnd));
 
                 oldPrice = price;
@@ -217,16 +213,14 @@ namespace TradeApp.ApiClient
 
         public IList<PricePoint> GetPricePoints(DateTimeOffset start, DateTimeOffset? end)
         {
-            
             //fetch from _trades
-            var result = _trades.Where(p =>( p._Time >= start) && (p._Time <= (end ?? DateTimeOffset.Now))).ToList();
+            var result = _trades.Where(p => (p._Time >= start) && (p._Time <= (end ?? DateTimeOffset.Now))).ToList();
 
             return result;
         }
 
         public GetCandleStickResult GetCandleStick(long last)
         {
-
             GetCandleStickResult candleStickResult = new GetCandleStickResult();
 
             DateTimeOffset openTime = PricePoint.UnixTimeNanoSecondsToDateTime(last.ToString());
@@ -256,7 +250,6 @@ namespace TradeApp.ApiClient
             candleStickResult.Last = last;
 
             return candleStickResult;
-
         }
 
         public PlaceOrderResult PlaceOrder(Orders order, bool wait)
@@ -309,7 +302,6 @@ namespace TradeApp.ApiClient
                 placeOrderResult.Exception = ex;
                 return placeOrderResult;
             }
-            
         }
 
         public CancelOrderResult CancelOrder(Orders order)
@@ -354,7 +346,7 @@ namespace TradeApp.ApiClient
         #endregion
 
         #region Trade bot
-        
+
         //simulate trading activity (frequency, price and volume of trades occuring on the exchange)
         void RunTradeBot()
         {
@@ -363,7 +355,6 @@ namespace TradeApp.ApiClient
 
             try
             {
-
                 #region Time of next trade (Non homogeneous Poisson Process)
 
                 var time = DateTimeOffset.UtcNow;
@@ -380,7 +371,6 @@ namespace TradeApp.ApiClient
 
                 _timer.Elapsed += (s, e) =>
                 {
-
                     #region Add point to trades
 
                     double amount = 0.0;
@@ -403,14 +393,12 @@ namespace TradeApp.ApiClient
 
                     #region Price
                     //Get Price
-
                     //annual return
                     decimal mu = 0.0004m;
                     //annual volatility
                     decimal sigma = 0.3786m;
                     //dt
                     decimal dt = (decimal)hoursToNextTrade / (24 * 365);
-
 
                     price = oldPrice * (1 + mu * dt + sigma * (decimal)Math.Sqrt((double)dt) * StandardNormal(Rnd));
 
@@ -431,57 +419,56 @@ namespace TradeApp.ApiClient
                     {
                         //This is a shortcut because we know that BrokerageService should only have one position at a time. We could implement a full order book
                         //but that introduces issues with knowing which order arrived first, cascade fill...etc (do this later if there is time)
-                        var pendingOrder = _orders.SingleOrDefault(o=>o.Status == "open");
+                        var pendingOrder = _orders.SingleOrDefault(o => o.Status == "open");
                         if (pendingOrder != null)
-                        {                           
-                                switch (pendingOrder.OrderType)
-                                {
-                                    case "stop-loss":
-                                        
-                                        if( (pendingOrder.Type == "buy" && (pendingOrder.Price <= pricePoint._Price)) ||
-                                            (pendingOrder.Type == "sell" && (pendingOrder.Price >= pricePoint._Price)))
-                                    
+                        {
+                            switch (pendingOrder.OrderType)
+                            {
+                                case "stop-loss":
+                                    if ((pendingOrder.Type == "buy" && (pendingOrder.Price <= pricePoint._Price)) ||
+                                        (pendingOrder.Type == "sell" && (pendingOrder.Price >= pricePoint._Price)))
+
+                                    {
+                                        decimal remainingOrderVolume = pendingOrder.Volume - (pendingOrder.VolumeExecuted ?? 0);
+
+                                        if (remainingOrderVolume <= remainingTradeAmount) //the order is fully covered by the reamining trade amount
                                         {
-                                                decimal remainingOrderVolume = pendingOrder.Volume - (pendingOrder.VolumeExecuted??0) ;
-                                                    
-                                                if(remainingOrderVolume <= remainingTradeAmount) //the order is fully covered by the reamining trade amount
-                                                {
-                                                    pendingOrder.VolumeExecuted = pendingOrder.Volume;
-                                                    pendingOrder.Status = "closed";
+                                            pendingOrder.VolumeExecuted = pendingOrder.Volume;
+                                            pendingOrder.Status = "closed";
 
-                                                    remainingTradeAmount -= remainingOrderVolume;
-                                                }
-                                                else // the order can only be partially filled
-                                                {
-                                                    pendingOrder.VolumeExecuted += remainingTradeAmount;
-                                                    pendingOrder.Status = "partial";
-
-                                                    remainingTradeAmount = 0;
-                                                }
-                                       }
-   
-                                        break;
-                                    case "market":
-                                        {
-                                            decimal remainingOrderVolume = pendingOrder.Volume - (pendingOrder.VolumeExecuted??0) ;
-                                                    
-                                            if(remainingOrderVolume <= remainingTradeAmount) //the order is fully covered by the reamining trade amount
-                                            {
-                                                pendingOrder.VolumeExecuted = pendingOrder.Volume;
-                                                pendingOrder.Status = "closed";
-
-                                                remainingTradeAmount -= remainingOrderVolume;
-                                            }
-                                            else // the order can only be partially filled
-                                            {
-                                                pendingOrder.VolumeExecuted += remainingTradeAmount;
-                                                pendingOrder.Status = "partial";
-
-                                                remainingTradeAmount = 0;
-                                            }
-                                            break;
+                                            remainingTradeAmount -= remainingOrderVolume;
                                         }
-                                }                            
+                                        else // the order can only be partially filled
+                                        {
+                                            pendingOrder.VolumeExecuted += remainingTradeAmount;
+                                            pendingOrder.Status = "partial";
+
+                                            remainingTradeAmount = 0;
+                                        }
+                                    }
+
+                                    break;
+                                case "market":
+                                    {
+                                        decimal remainingOrderVolume = pendingOrder.Volume - (pendingOrder.VolumeExecuted ?? 0);
+
+                                        if (remainingOrderVolume <= remainingTradeAmount) //the order is fully covered by the reamining trade amount
+                                        {
+                                            pendingOrder.VolumeExecuted = pendingOrder.Volume;
+                                            pendingOrder.Status = "closed";
+
+                                            remainingTradeAmount -= remainingOrderVolume;
+                                        }
+                                        else // the order can only be partially filled
+                                        {
+                                            pendingOrder.VolumeExecuted += remainingTradeAmount;
+                                            pendingOrder.Status = "partial";
+
+                                            remainingTradeAmount = 0;
+                                        }
+                                        break;
+                                    }
+                            }
                         }
                     }
 
@@ -489,10 +476,9 @@ namespace TradeApp.ApiClient
                     hoursToNextTrade = HoursToNextTrade(time.UtcDateTime);
                     time = time.AddHours(hoursToNextTrade);
                     _timer.Interval = hoursToNextTrade * 60 * 60 * 1000;
-                    _timer.Start(); 
+                    _timer.Start();
                     #endregion
                 };
-
 
                 _timer.Start();
             }
@@ -503,7 +489,6 @@ namespace TradeApp.ApiClient
                 Log(LogEntryImportance.Error, "There was an error. KrakenClientMock timer stopped. \n Details: " + ex.Message);
                 throw;
             }
-            
         }
 
         #endregion
@@ -512,7 +497,6 @@ namespace TradeApp.ApiClient
 
         double HoursToNextTrade(DateTime t0)
         {
-            
             //Get lambda(time): Average number of trades per hour
             double lambda = (double)Lambda(t0);
 
@@ -528,13 +512,13 @@ namespace TradeApp.ApiClient
         {
             var dayOfWeek = time.DayOfWeek;
             int hourOfDay = time.Hour;
-            
-            decimal lambda =0;
+
+            decimal lambda = 0;
             if ((int)dayOfWeek != 0 && (int)dayOfWeek != 6) // sunday=0, saturday=6
             {
                 lambda = _weekDayCountAverages[hourOfDay];
             }
-            else 
+            else
             {
                 lambda = _weekEndCountAverages[hourOfDay];
             }
@@ -544,7 +528,6 @@ namespace TradeApp.ApiClient
 
         dynamic GetAmountAverageAndStdDev(DateTime time)
         {
-            var dayOfWeek = time.DayOfWeek;
             int hourOfDay = time.Hour;
 
             decimal average = _weekDayVolumeAverages[hourOfDay];
@@ -554,7 +537,7 @@ namespace TradeApp.ApiClient
         }
 
         //Box-Muller
-        decimal StandardNormal(System.Random rnd)
+        decimal StandardNormal(Random rnd)
         {
             var u = rnd.NextDouble();
             var v = rnd.NextDouble();
@@ -569,7 +552,6 @@ namespace TradeApp.ApiClient
 
         protected void Log(LogEntryImportance importance, string message)
         {
-
             //log to file
             switch (importance)
             {
@@ -584,7 +566,7 @@ namespace TradeApp.ApiClient
                     break;
             }
 
-        } 
+        }
         #endregion
     }
 }

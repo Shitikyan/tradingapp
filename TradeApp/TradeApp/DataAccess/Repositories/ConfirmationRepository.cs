@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.Composition;
+﻿using System.ComponentModel.Composition;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TradeApp.DataAccess.Repositories
 {
     [Export(typeof(IConfirmationRepository))]
     [ExportMetadata("Nature", "database")]
-    public class ConfirmationRepository : TradeApp.DataAccess.IConfirmationRepository
+    public class ConfirmationRepository : IConfirmationRepository
     {
         public void Save(Confirmations confirmation)
         {

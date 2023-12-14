@@ -1,8 +1,7 @@
-﻿using System;
-namespace TradeApp.DataAccess
+﻿namespace TradeApp.DataAccess
 {
     public interface ISetupRepository
     {
-        void Save(TradeApp.DataAccess.Setups setup);
+        void Save(Setups setup);
     }
 }

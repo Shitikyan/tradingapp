@@ -1,41 +1,30 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.Composition;
-using System.ComponentModel.Composition.Hosting;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TradeApp.ApiClient;
-using TradeApp.Infrastructure;
-using TradeApp.Messaging;
-using TradeApp.Service;
+﻿using TradeApp.Infrastructure;
 
 namespace TradeApp.ViewModel
 {
-    public class MainWindowViewModel:ViewModelBase
+    public class MainWindowViewModel : ViewModelBase
     {
-                
+
         public MainWindowViewModel()
         {
-              
+
         }
 
         ControlViewViewModel controlVM;
         public ControlViewViewModel ControlVM
-        { 
+        {
             get
             {
                 if (controlVM == null)
                     controlVM = new ControlViewViewModel();
                 return controlVM;
-              
+
             }
-            set 
+            set
             {
                 controlVM = value;
-                this.RaisePropertyChanged(()=>this.ControlVM);
-            }   
-
+                this.RaisePropertyChanged(() => this.ControlVM);
+            }
         }
 
         GraphViewViewModel graphVM;
@@ -53,7 +42,6 @@ namespace TradeApp.ViewModel
                 graphVM = value;
                 this.RaisePropertyChanged(() => this.GraphVM);
             }
-
         }
 
         LogViewViewModel logVM;
@@ -71,7 +59,6 @@ namespace TradeApp.ViewModel
                 logVM = value;
                 this.RaisePropertyChanged(() => this.LogVM);
             }
-
         }
 
         PanelViewViewModel panelVM;
@@ -89,7 +76,6 @@ namespace TradeApp.ViewModel
                 panelVM = value;
                 this.RaisePropertyChanged(() => this.PanelVM);
             }
-
         }
 
         PositionViewViewModel positionVM;
@@ -107,9 +93,6 @@ namespace TradeApp.ViewModel
                 positionVM = value;
                 this.RaisePropertyChanged(() => this.PositionVM);
             }
-
         }
-
- 
     }
 }

@@ -1,8 +1,7 @@
-﻿using System;
-namespace TradeApp.DataAccess
+﻿namespace TradeApp.DataAccess
 {
     public interface IConfirmationRepository
     {
-        void Save(TradeApp.DataAccess.Confirmations confirmation);
+        void Save(Confirmations confirmation);
     }
 }

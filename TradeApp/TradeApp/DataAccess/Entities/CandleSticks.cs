@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TradeApp.DataAccess
 {
@@ -32,7 +28,6 @@ namespace TradeApp.DataAccess
                 isSelected = value;
                 OnPropertyChanged("IsSelected");
             }
-
         }
 
         public bool ClosedUnder
@@ -58,6 +53,5 @@ namespace TradeApp.DataAccess
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
-
     }
 }

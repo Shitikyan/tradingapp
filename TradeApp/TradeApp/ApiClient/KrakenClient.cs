@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using Jayrock.Json;
 using Jayrock.Json.Conversion;
 using System.Net;
@@ -19,11 +18,9 @@ using PennedObjects.RateLimiting;
 
 namespace TradeApp.ApiClient
 {
-
     [Export(typeof(IExchangeClient))]
-    public class KrakenClient : ExchangeClientBase,IExchangeClient
+    public class KrakenClient : ExchangeClientBase, IExchangeClient
     {
-
         string _url;
         int _version;
         string _key;
@@ -40,14 +37,12 @@ namespace TradeApp.ApiClient
             _secret = ConfigurationManager.AppSettings["KrakenSecret"];
             _rateGate = new RateGate(1, TimeSpan.FromSeconds(5));
             _logger = LogManager.GetLogger("KrakenClient");
-            _maxRetries = int.Parse(ConfigurationManager.AppSettings["KrakenClientMaxRetries"]) ;
+            _maxRetries = int.Parse(ConfigurationManager.AppSettings["KrakenClientMaxRetries"]);
             base.Name = "Kraken";
-
         }
 
         private JsonObject QueryPublic(string a_sMethod, string props = null)
         {
-
             try
             {
                 int tries = 0;
@@ -55,7 +50,6 @@ namespace TradeApp.ApiClient
 
                 while (keepTrying)
                 {
-
                     //Wait for RateGate
                     _rateGate.WaitToProceed();
 
@@ -63,7 +57,6 @@ namespace TradeApp.ApiClient
                     HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create(address);
                     webRequest.ContentType = "application/x-www-form-urlencoded";
                     webRequest.Method = "POST";
-
 
                     if (props != null)
                     {
@@ -136,7 +129,7 @@ namespace TradeApp.ApiClient
             {
                 int tries = 1;
                 bool keepTrying = true;
-                
+
                 while (keepTrying)
                 {
                     //Wait for RateGate before creating the nonce otherwise one might get an Invalid-nonce exception if multiple threads are placing requests
@@ -177,7 +170,7 @@ namespace TradeApp.ApiClient
                         {
                             writer.Write(nprops);
                         }
-                    } 
+                    }
                     #endregion
 
                     //Make the request
@@ -208,9 +201,9 @@ namespace TradeApp.ApiClient
                             }
                         }
 
-                        _logger.Debug(string.Format("WebException. Message: {0}",wex.Message));
+                        _logger.Debug(string.Format("WebException. Message: {0}", wex.Message));
 
-                        
+
                         if (tries < _maxRetries)
                         {
                             _logger.Debug("Retrying...");
@@ -223,15 +216,15 @@ namespace TradeApp.ApiClient
                             _logger.Error(string.Format("Maximum number of tries ({0}) reached. Throwing...", _maxRetries));
                             throw;
                         }
-                      
-                        #endregion                                              
+
+                        #endregion
                     }
                 }
-                
+
                 //not supposed to get here
                 throw new Exception("Exited the try loop without anything happening.");
             }
-            catch(Exception ex) 
+            catch (Exception ex)
             {
                 throw new Exception(string.Format("Error in KrakenClient.QueryPrivate at line {0}: {1}", ex.LineNumber(), ex.Message));
             }
@@ -240,7 +233,7 @@ namespace TradeApp.ApiClient
         #region interface members
 
         public IList<PricePoint> CatchUp()
-        { 
+        {
             //go back 30 days
             var res = GetPricePoints((DateTimeOffset.Now).Subtract(new TimeSpan(30, 0, 0, 0)), null);
 
@@ -255,7 +248,7 @@ namespace TradeApp.ApiClient
             {
                 DateTimeOffset endTime = end ?? DateTimeOffset.UtcNow;
                 Log(LogEntryImportance.Info, "  Fetching recent price data...");
-                pricePoints = client.GetPricePointsByDate(start.UtcDateTime, endTime.UtcDateTime); 
+                pricePoints = client.GetPricePointsByDate(start.UtcDateTime, endTime.UtcDateTime);
                 Log(LogEntryImportance.Info, "  Done fetching price data.");
                 if (pricePoints == null)
                 {
@@ -273,7 +266,7 @@ namespace TradeApp.ApiClient
         public GetCandleStickResult GetCandleStick(long last)
         {
             GetCandleStickResult getCandleStickResult = new GetCandleStickResult();
-            
+
             try
             {
                 var result = GetRecentTrades("XXBTZEUR", last);
@@ -318,7 +311,7 @@ namespace TradeApp.ApiClient
                         decimal low = pricePoints.Min(p => p._Price);
 
                         candleStick = new CandleSticks(openTime, closeTime, openPrice, high, low, closePrice);
-                        
+
                         _logger.Info(string.Format("OpenTime: {0}, CloseTime: {1}, Open: {2}, High: {3}, Low: {4}, Close: {5}", openTime, closeTime, openPrice, high, low, closeTime));
 
                     }
@@ -341,7 +334,6 @@ namespace TradeApp.ApiClient
             }
         }
 
-        
         /// <summary>
         /// Submit an order to Kraken. 
         /// </summary>
@@ -384,7 +376,7 @@ namespace TradeApp.ApiClient
                     else
                     {
                         Orders newOrder = order;
-                        
+
                         string transactionIds = "";
 
                         foreach (var item in txid)
@@ -407,11 +399,11 @@ namespace TradeApp.ApiClient
                                 switch (refreshOrderResult.ResultType)
                                 {
                                     case RefreshOrderResultType.success:
-                                        placeOrderResult.Order = newOrder;   
+                                        placeOrderResult.Order = newOrder;
                                         switch (newOrder.Status)
                                         {
                                             case "closed":
-                                                placeOrderResult.ResultType = PlaceOrderResultType.success;                                               
+                                                placeOrderResult.ResultType = PlaceOrderResultType.success;
                                                 return placeOrderResult;
                                             case "pending":
                                                 break;
@@ -688,52 +680,6 @@ namespace TradeApp.ApiClient
             return QueryPublic("Time") as JsonObject;
         }
 
-        // Get a public list of active assets and their properties:
-        /** 
-        * Returned assets are keyed by their ISO-4217-A3-X names, example output:
-        * 
-        * Array
-        * (
-        *     [error] => Array
-        *         (
-        *         )
-        * 
-        *     [result] => Array
-        *         (
-        *             [XBTC] => Array
-        *                 (
-        *                     [aclass] => currency
-        *                     [altname] => BTC
-        *                     [decimals] => 10
-        *                     [display_decimals] => 5
-        *                 )
-        * 
-        *             [XLTC] => Array
-        *                 (
-        *                     [aclass] => currency
-        *                     [altname] => LTC
-        *                     [decimals] => 10
-        *                     [display_decimals] => 5
-        *                 )
-        * 
-        *             [XXRP] => Array
-        *                 (
-        *                     [aclass] => currency
-        *                     [altname] => XRP
-        *                     [decimals] => 8
-        *                     [display_decimals] => 5
-        *                 )
-        * 
-        *             [ZEUR] => Array
-        *                 (
-        *                     [aclass] => currency
-        *                     [altname] => EUR
-        *                     [decimals] => 4
-        *                     [display_decimals] => 2
-        *                 )
-        *             ...
-        * )
-        */
         public JsonObject GetActiveAssets()
         {
             return QueryPublic("Assets") as JsonObject;
@@ -767,42 +713,6 @@ namespace TradeApp.ApiClient
             return QueryPublic("AssetPairs", pairString.ToString()) as JsonObject;
         }
 
-        // Get public ticker info for BTC/USD pair:
-        /**
-         * Example output:
-         *
-         * Array
-         * (
-         *     [error] => Array
-         *         (
-         *         )
-         * 
-         *     [result] => Array
-         *         (
-         *             [XBTCZUSD] => Array
-         *                 (
-         *                     [a] => Array
-         *                         (
-         *                             [0] => 106.09583
-         *                             [1] => 111
-         *                         )
-         * 
-         *                     [b] => Array
-         *                         (
-         *                             [0] => 105.53966
-         *                             [1] => 4
-         *                         )
-         * 
-         *                     [c] => Array
-         *                         (
-         *                             [0] => 105.98984
-         *                             [1] => 0.13910102
-         *                         )
-         * 
-         *                     ...
-         *         )
-         * )
-         */
         public JsonObject GetTicker(List<string> pairs)
         {
 
@@ -825,7 +735,6 @@ namespace TradeApp.ApiClient
 
             return QueryPublic("Ticker", pairString.ToString()) as JsonObject;
         }
-
 
         //Get public order book
         /// <summary>
@@ -873,7 +782,6 @@ namespace TradeApp.ApiClient
 
             return QueryPublic("Trades", reqs) as JsonObject;
         }
-
 
         /// <summary>
         /// Get recent spread data
@@ -986,7 +894,6 @@ namespace TradeApp.ApiClient
         ///  nompp = no market price protection 
         ///trades = array of trade ids related to order (if trades info requested and data available)
 
-
         /// <summary>
         /// 
         /// </summary>
@@ -1026,7 +933,6 @@ namespace TradeApp.ApiClient
                 reqs += string.Format("&end={0}", end);
             if (!string.IsNullOrEmpty(ofs))
                 reqs += string.Format("&ofs={0}", ofs);
-
 
             return QueryPrivate("ClosedOrders", reqs) as JsonObject;
         }
@@ -1324,7 +1230,6 @@ namespace TradeApp.ApiClient
 
         protected void Log(LogEntryImportance importance, string message)
         {
-
             //log to file
             switch (importance)
             {
@@ -1338,7 +1243,6 @@ namespace TradeApp.ApiClient
                     _logger.Error(message);
                     break;
             }
-
         }
 
         #endregion

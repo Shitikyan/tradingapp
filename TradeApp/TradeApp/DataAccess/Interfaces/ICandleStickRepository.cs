@@ -1,8 +1,7 @@
-﻿using System;
-namespace TradeApp.DataAccess
+﻿namespace TradeApp.DataAccess
 {
     public interface ICandleStickRepository
     {
-        void Save(TradeApp.DataAccess.CandleSticks candleStick);
+        void Save(CandleSticks candleStick);
     }
 }

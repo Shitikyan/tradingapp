@@ -5,8 +5,6 @@ using System.ComponentModel.Composition.Hosting;
 using System.Configuration;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using TradeApp.ApiClient;
 using TradeApp.DataAccess;
 
@@ -14,7 +12,7 @@ namespace TradeApp.Infrastructure
 {
     public class MEFLoader
     {
-        private  CompositionContainer _Container;
+        private CompositionContainer _Container;
         private string _repositoryConfigurationType;
 
         public MEFLoader(string path = "TradeApp")
@@ -33,7 +31,7 @@ namespace TradeApp.Infrastructure
 
             //read configuration type for repositories
             _repositoryConfigurationType = ConfigurationManager.AppSettings["RepositoryConfigurationType"];
-        } 
+        }
 
         #region composable parts
         [ImportMany]
@@ -49,7 +47,7 @@ namespace TradeApp.Infrastructure
         IEnumerable<Lazy<IOrderRepository, IRepositoryMetadata>> OrderRepositories { get; set; }
 
         [ImportMany]
-        IEnumerable<Lazy<ISetupRepository, IRepositoryMetadata>> SetupRepositories { get; set; } 
+        IEnumerable<Lazy<ISetupRepository, IRepositoryMetadata>> SetupRepositories { get; set; }
         #endregion
 
         #region public repositories
@@ -95,7 +93,7 @@ namespace TradeApp.Infrastructure
                     orderRepository = this.OrderRepositories.FirstOrDefault(r => r.Metadata.Nature.Equals(_repositoryConfigurationType)).Value;
                 return orderRepository;
             }
-        } 
+        }
         #endregion
     }
 }

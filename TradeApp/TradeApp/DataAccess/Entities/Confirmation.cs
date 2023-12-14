@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TradeApp.DataAccess
 {
-    public partial class Confirmations:INotifyPropertyChanged
+    public partial class Confirmations : INotifyPropertyChanged
     {
         public Confirmations(DateTimeOffset date, decimal signal)
         {
@@ -19,7 +15,7 @@ namespace TradeApp.DataAccess
         {
             Date = candleStick.CloseTime;
             CandleStickId = candleStick.Id;
-            Signal = signal;           
+            Signal = signal;
             SetupId = setupId;
         }
 
@@ -36,7 +32,6 @@ namespace TradeApp.DataAccess
                 isSelected = value;
                 OnPropertyChanged("IsSelected");
             }
-
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

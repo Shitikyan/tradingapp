@@ -1,38 +1,33 @@
-﻿using log4net;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System;
 using System.Threading.Tasks;
 using TradeApp.ApiClient;
 using TradeApp.DataAccess;
 using TradeApp.DataAccess.Factories;
-using TradeApp.DataAccess.Repositories;
 using TradeApp.Infrastructure;
 using TradeApp.Messaging;
 using TradeApp.Model;
 
 namespace TradeApp.Service
 {
-    public class BrokerageService:ServiceBase
+    public class BrokerageService : ServiceBase
     {
-        
+
         OrderFactory _orderFactory;
         IOrderRepository _orderRepository;
 
-        public BrokerageService(IExchangeClient exchangeClient):base()
+        public BrokerageService(IExchangeClient exchangeClient) : base()
         {
             _client = exchangeClient;
-            
+
             BrokerPosition = new Position(this);
 
             _orderFactory = new OrderFactory();
-            
+
             _orderRepository = _mefLoader.OrderRepository;
 
             Mediator.Register(this);
         }
-        
+
         #region Methods
 
         private void OpenPosition(OpenPositionData openPositionData)
@@ -366,7 +361,7 @@ namespace TradeApp.Service
             BrokerPosition.EmergencyExitOrder = newOrder;
 
         }
-        
+
         #endregion
 
         #region Message Handlers
@@ -472,11 +467,11 @@ namespace TradeApp.Service
 
 
                 Log(LogEntryImportance.Info, "Position closed.", true);
-                
+
                 BrokerPosition = null;
             });
             task.Start();
-        } 
+        }
         #endregion
 
         #region Properties
@@ -502,7 +497,7 @@ namespace TradeApp.Service
         IExchangeClient _client;
         public IExchangeClient Client
         {
-            get 
+            get
             {
                 return _client;
             }
@@ -517,7 +512,6 @@ namespace TradeApp.Service
 
         private class Position
         {
-
             BrokerageService _brokerageService;
 
             public Position(BrokerageService brokerageService)
@@ -603,31 +597,30 @@ namespace TradeApp.Service
                 }
             }
         }
-
         #region Dispose
 
         ~BrokerageService()
-		{
-			// In case the client forgets to call
-			// Dispose , destructor will be invoked for
-			Dispose(false);
-		}
+        {
+            // In case the client forgets to call
+            // Dispose , destructor will be invoked for
+            Dispose(false);
+        }
 
-		protected virtual void Dispose(bool disposing)
-		{
-			if (disposing)
-			{
-				// dispose managed resources
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                // dispose managed resources
                 BrokerPosition = null;
-			}
-			// free native resources
-		}
+            }
+            // free native resources
+        }
 
-		public void Dispose()
-		{
-			Dispose(true);
-			GC.SuppressFinalize(this);
-		}
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
 
         #endregion
     }

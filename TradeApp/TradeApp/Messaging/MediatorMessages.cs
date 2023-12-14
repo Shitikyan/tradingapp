@@ -28,7 +28,6 @@
         public const string NewCandleStick = "NewCandleStick";
         public const string NewSetup = "NewSetup";
         public const string NewConfirmation = "NewConfirmation";
-        
 
         public const string OpenPosition = "OpenPosition";
         public const string ShiftPositionLimits = "ShiftPositionLimits";
@@ -38,6 +37,5 @@
         public const string UpdateOrder = "UpdateOrder";
         public const string UpdateEmergencyOrder = "UpdateEmergencyOrder";
         public const string BrokerPositionNull = "BrokerPositionNull";
-
     }
 }

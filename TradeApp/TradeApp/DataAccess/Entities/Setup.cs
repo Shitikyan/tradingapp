@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TradeApp.DataAccess
 {
@@ -14,7 +10,7 @@ namespace TradeApp.DataAccess
         down = 2,
     }
 
-    public partial class Setups:INotifyPropertyChanged
+    public partial class Setups : INotifyPropertyChanged
     {
         public Setups(DateTimeOffset date, int type, decimal target)
         {
@@ -44,7 +40,6 @@ namespace TradeApp.DataAccess
                 isSelected = value;
                 OnPropertyChanged("IsSelected");
             }
-
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TradeApp.DataAccess;
+﻿using TradeApp.DataAccess;
 
 namespace TradeApp.Messaging
 {
     public class OpenPositionData
     {
-        public OpenPositionData(OrderType orderType, decimal enteringPrice, decimal exitingPrice, decimal volume, int candleStickId, int confirmationId, bool validateOnly=false)
+        public OpenPositionData(OrderType orderType, decimal enteringPrice, decimal exitingPrice, decimal volume, int candleStickId, int confirmationId, bool validateOnly = false)
         {
             Direction = orderType;
             EnteringPrice = enteringPrice;
@@ -19,7 +14,7 @@ namespace TradeApp.Messaging
             ConfirmationId = confirmationId;
             ValidateOnly = validateOnly;
         }
-        
+
         public OrderType Direction { get; set; }
         public decimal EnteringPrice { get; set; }
         public decimal ExitingPrice { get; set; }

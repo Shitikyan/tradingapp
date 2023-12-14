@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TradeApp.Model
 {
@@ -10,7 +6,7 @@ namespace TradeApp.Model
     {
         public LogEntry() { }
 
-        public LogEntry(LogEntryImportance importance, DateTime dateTime,string colleague, string message)
+        public LogEntry(LogEntryImportance importance, DateTime dateTime, string colleague, string message)
         {
             DateTime = dateTime;
             Colleague = colleague;
@@ -26,9 +22,9 @@ namespace TradeApp.Model
         public int ThreadID { get; set; }
     }
     public enum LogEntryImportance
-    { 
-        Info =1,
-        Debug=2,
-        Error=3,
+    {
+        Info = 1,
+        Debug = 2,
+        Error = 3,
     }
 }

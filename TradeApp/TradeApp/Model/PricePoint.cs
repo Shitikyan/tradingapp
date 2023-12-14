@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TradeApp.ConnectorService
 {
@@ -32,18 +28,17 @@ namespace TradeApp.ConnectorService
             return Epoch.AddSeconds(seconds);
         }
 
-
         public static DateTimeOffset UnixTimeNanoSecondsToDateTime(string text)
         {
             long nanoseconds = long.Parse(text, CultureInfo.InvariantCulture);
-            return Epoch.AddSeconds(nanoseconds/1000000000);
+            return Epoch.AddSeconds(nanoseconds / 1000000000);
         }
 
         public static long DateTimeToUnixTimeNonoseconds(DateTimeOffset date)
         {
             //create Timespan by subtracting the value provided from
             //the Unix Epoch
-            
+
             //TEMP MODIF
             TimeSpan span = (date - Epoch);
 

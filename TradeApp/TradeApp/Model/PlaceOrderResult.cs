@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TradeApp.DataAccess;
 
 namespace TradeApp.Model
@@ -18,7 +15,6 @@ namespace TradeApp.Model
         public Exception Exception { get; set; }
 
         public Orders Order { get; set; }
- 
     }
 
     public enum PlaceOrderResultType
@@ -30,5 +26,4 @@ namespace TradeApp.Model
         canceled_not_partial,
         exception,
     }
-    
 }

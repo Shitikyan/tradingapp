@@ -1,17 +1,15 @@
 ﻿using Microsoft.Research.DynamicDataDisplay.Common;
 using Microsoft.Research.DynamicDataDisplay.DataSources;
-using Microsoft.Research.DynamicDataDisplay.PointMarkers;
 using System;
 using System.Windows.Threading;
 using TradeApp.ConnectorService;
 using TradeApp.DataAccess;
 using TradeApp.Infrastructure;
 using TradeApp.Messaging;
-using TradeApp.Model;
 
 namespace TradeApp.ViewModel
 {
-    public class GraphViewViewModel:ViewModelBase
+    public class GraphViewViewModel : ViewModelBase
     {
 
         public RingArray<CandleSticks> candleStickCollection;
@@ -21,7 +19,7 @@ namespace TradeApp.ViewModel
 
         public GraphViewViewModel()
         {
-            Mediator.Register(this);           
+            Mediator.Register(this);
         }
 
         EnumerableDataSource<CandleSticks> priceDS;
@@ -35,9 +33,6 @@ namespace TradeApp.ViewModel
             {
                 value.SetXMapping(k => k.OpenTime.UtcTicks);
                 value.SetYMapping(k => (double)k.Close);
-               // value.AddMapping(CandleStickPointMarker.OpenProperty, k => (double)k.Open);
-                //value.AddMapping(CandleStickPointMarker.HighProperty, k => (double)k.High);
-                //value.AddMapping(CandleStickPointMarker.LowProperty, k => (double)k.Low);
                 priceDS = value;
                 base.RaisePropertyChanged(() => this.PriceDS);
             }
@@ -97,7 +92,7 @@ namespace TradeApp.ViewModel
             }
         }
 
-        [MediatorMessageSink(MediatorMessages.InitializeGraphViewModel, ParameterType = typeof(int))]        
+        [MediatorMessageSink(MediatorMessages.InitializeGraphViewModel, ParameterType = typeof(int))]
         public void Initialize(int period)
         {
             candleStickCollection = new RingArray<CandleSticks>(period);
@@ -147,8 +142,9 @@ namespace TradeApp.ViewModel
                                         highBoundCollection.Add(lastPricePoint);
 
                                         HighBoundDS = new EnumerableDataSource<PricePoint>(highBoundCollection);
-                                    }catch
-                                    {}
+                                    }
+                                    catch
+                                    { }
                                 }));
         }
 

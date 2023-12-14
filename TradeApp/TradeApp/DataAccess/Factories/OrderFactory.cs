@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TradeApp.DataAccess.Factories
 {
@@ -36,7 +32,7 @@ namespace TradeApp.DataAccess.Factories
             order.Type = (orderToClose.Type == "buy") ? "sell" : "buy";
             order.OrderType = (KrakenOrderType.stop_loss).ToString().Replace("_", "-");
             order.Price = limitPrice;
-            order.Volume = orderToClose.VolumeExecuted??orderToClose.Volume;
+            order.Volume = orderToClose.VolumeExecuted ?? orderToClose.Volume;
             order.OFlags = orderToClose.OFlags;
             order.Validate = validateOnly;
             order.CandleStickId = orderToClose.CandleStickId;
@@ -44,7 +40,6 @@ namespace TradeApp.DataAccess.Factories
             order.Status = "not yet submitted";
 
             return order;
-
         }
 
         public Orders CreateEmergencyExitOrder(Orders orderToClose, bool validateOnly = false)
@@ -55,7 +50,7 @@ namespace TradeApp.DataAccess.Factories
             order.Pair = orderToClose.Pair;
             order.Type = (orderToClose.Type == "buy") ? "sell" : "buy";
             order.OrderType = (KrakenOrderType.market).ToString().Replace("_", "-");
-            order.Volume = orderToClose.VolumeExecuted??orderToClose.Volume;
+            order.Volume = orderToClose.VolumeExecuted ?? orderToClose.Volume;
             order.OFlags = orderToClose.OFlags;
             order.Validate = validateOnly;
             order.Status = "not yet submitted";

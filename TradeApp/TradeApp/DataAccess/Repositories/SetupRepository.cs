@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.Composition;
+﻿using System.ComponentModel.Composition;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TradeApp.DataAccess.Repositories
 {
     [Export(typeof(ISetupRepository))]
     [ExportMetadata("Nature", "database")]
-    public class SetupRepository : TradeApp.DataAccess.ISetupRepository
+    public class SetupRepository : ISetupRepository
     {
         public void Save(Setups setup)
         {

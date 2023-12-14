@@ -1,15 +1,9 @@
 ﻿using log4net;
 using System;
-using System.Collections.Generic;
 using System.Configuration;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TradeApp.ConnectorService;
 using TradeApp.DataAccess;
-using TradeApp.DataAccess.Factories;
-using TradeApp.DataAccess.Repositories;
 using TradeApp.Infrastructure;
 using TradeApp.Infrastructure.Model;
 using TradeApp.Messaging;
@@ -17,9 +11,8 @@ using TradeApp.Model;
 
 namespace TradeApp.Service
 {
-    public class StrategyService:ServiceBase
+    public class StrategyService : ServiceBase
     {
-
         ICandleStickRepository _candleStickRepository;
         IConfirmationRepository _confirmationRepository;
         ISetupRepository _setupRepository;
@@ -33,7 +26,6 @@ namespace TradeApp.Service
             _candleStickRepository = _mefLoader.CandleStickRepository;
             _confirmationRepository = _mefLoader.ConfirmationRepository;
             _setupRepository = _mefLoader.SetupRepository;
-
         }
 
         #region Configuration Fields
@@ -45,7 +37,6 @@ namespace TradeApp.Service
         decimal PositionOpeningCost;
         bool EnableOrders;
         bool ValidateOnly = false;
-        
 
         #endregion
 
@@ -59,11 +50,11 @@ namespace TradeApp.Service
         decimal highBound;
         decimal HighBound
         {
-            get 
+            get
             {
                 return highBound;
             }
-            set 
+            set
             {
                 highBound = value;
                 Mediator.NotifyColleagues<decimal>(MediatorMessages.UpdateHighBound, highBound);
@@ -83,14 +74,15 @@ namespace TradeApp.Service
                 Mediator.NotifyColleagues<decimal>(MediatorMessages.UpdateLowBound, lowBound);
             }
         }
-        
+
         decimal OngoingContracts;
+
         object OngoingContractsLock = new Object();
 
         decimal? _positionEpsilon;
-        decimal PositionEpsilon 
+        decimal PositionEpsilon
         {
-            get 
+            get
             {
                 if (!_positionEpsilon.HasValue)
                 {
@@ -99,7 +91,7 @@ namespace TradeApp.Service
                 }
                 return _positionEpsilon.Value;
             }
-            set 
+            set
             {
                 _positionEpsilon = value;
             }
@@ -130,7 +122,7 @@ namespace TradeApp.Service
             if (Setup != null)
             {
                 Log(LogEntryImportance.Info, "Setup not null", logToConsole);
-                
+
                 //If setup is confirmed
                 if (Setup.Confirmation != null)
                 {
@@ -145,10 +137,10 @@ namespace TradeApp.Service
                             {
                                 //shift limits up
                                 UpdateLimits(CurrentCandle.Close);
-                                Log(LogEntryImportance.Info,"Shifted limits up",logToConsole);
+                                Log(LogEntryImportance.Info, "Shifted limits up", logToConsole);
 
                                 //if we re not trading yet, open a position
-                                if (OngoingContracts==0) 
+                                if (OngoingContracts == 0)
                                 {
                                     OpenPosition();
                                 }
@@ -159,9 +151,9 @@ namespace TradeApp.Service
                                     ShiftStopLoss();
                                 }
                                 //Negative position in long trend, BAD
-                                else 
-                                {                                    
-                                    Log(LogEntryImportance.Error,string.Format("negative position of {0} contracts during up-trend. THIS IS BAD",OngoingContracts),logToConsole);
+                                else
+                                {
+                                    Log(LogEntryImportance.Error, string.Format("negative position of {0} contracts during up-trend. THIS IS BAD", OngoingContracts), logToConsole);
                                     Log(LogEntryImportance.Info, "Closing position", logToConsole);
                                     //Close the position
                                     ClosePosition();
@@ -169,7 +161,7 @@ namespace TradeApp.Service
                             }
                             //If the price closed below the lower bound
                             else if (CurrentCandle.Close <= LowBound)
-                            { 
+                            {
                                 //If OngoingContracts is not 0
                                 if (OngoingContracts != 0)
                                 {
@@ -177,7 +169,7 @@ namespace TradeApp.Service
                                     Log(LogEntryImportance.Error, string.Format("position is {0} instead of 0. THIS IS BAD", OngoingContracts), logToConsole);
                                 }
 
-                                
+
                                 //Check if trend is broken
                                 //If there is a setup in the other direction
                                 Setups tempSetup = DetermineSetup();
@@ -195,9 +187,9 @@ namespace TradeApp.Service
                                     Log(LogEntryImportance.Info, "New Setup detected", logToConsole);
                                     LowBound = HighBound = Setup.Target;
 
-                                    
+
                                 }
-                                else 
+                                else
                                 {
                                     //Trend was not broken. Just update limits
                                     UpdateLimits(CurrentCandle.Close);
@@ -218,23 +210,23 @@ namespace TradeApp.Service
                                 if (tempSetup != null)
                                 {
                                     Log(LogEntryImportance.Info, "Trend is broken", logToConsole);
-                                    
+
                                     //Close position or cancel current opening order                                   
-                                     Log(LogEntryImportance.Info, "Closing position", logToConsole);
-                                     ClosePosition();
-                                                                        
+                                    Log(LogEntryImportance.Info, "Closing position", logToConsole);
+                                    ClosePosition();
+
                                     Setup = tempSetup;
                                     Log(LogEntryImportance.Info, "New Setup detected", logToConsole);
                                     LowBound = HighBound = Setup.Target;
                                 }
                                 else
                                 {
-                                    Log(LogEntryImportance.Info, "Price is contained. Waiting.", logToConsole);                                   
+                                    Log(LogEntryImportance.Info, "Price is contained. Waiting.", logToConsole);
                                 }
                             }
 
                             break;
-                            #endregion
+                        #endregion
 
                         //Short Position
                         case (int)SetupType.down:
@@ -246,7 +238,7 @@ namespace TradeApp.Service
                                 Log(LogEntryImportance.Info, "Shifted limits down", logToConsole);
 
                                 //if we re not trading yet for some reason, it's still time to open a position
-                                if (OngoingContracts==0)
+                                if (OngoingContracts == 0)
                                 {
                                     OpenPosition();
                                 }
@@ -268,7 +260,7 @@ namespace TradeApp.Service
                                     Log(LogEntryImportance.Error, string.Format("position is {0} instead of 0. THIS IS BAD", OngoingContracts), logToConsole);
                                 }
 
-                                
+
                                 //Check if trend is broken
                                 //If there is a setup in the other direction, we abort the previous one
                                 Setups tempSetup = DetermineSetup();
@@ -304,12 +296,12 @@ namespace TradeApp.Service
                                 if (tempSetup != null)
                                 {
                                     Log(LogEntryImportance.Info, "Trend is broken", logToConsole);
-                                    
+
                                     //Close position or cancel opening order
-                                    
+
                                     Log(LogEntryImportance.Info, "Closing position", logToConsole);
                                     ClosePosition();
-                                    
+
 
                                     Setup = tempSetup;
                                     Log(LogEntryImportance.Info, "New Setup detected", logToConsole);
@@ -322,12 +314,11 @@ namespace TradeApp.Service
                             }
 
                             break;
-                            #endregion
+                        #endregion
 
                         default:
                             break;
                     }
-
                 }
                 //Setup is not confirmed
                 else
@@ -357,10 +348,7 @@ namespace TradeApp.Service
                         }
                         //otherwise we keep it
                     }
-
-
                 }
-
             }
             //There is no setup
             else
@@ -375,14 +363,13 @@ namespace TradeApp.Service
                     LowBound = HighBound = Setup.Target;
                 }
             }
-
         }
 
         Setups DetermineSetup()
         {
             Setups result = null;
 
-            if (OldCandle == null)  OldCandle = CurrentCandle;
+            if (OldCandle == null) OldCandle = CurrentCandle;
 
             //if the price crossed the wma upward, it's an up setup
             if (OldCandle.ClosedUnder && CurrentCandle.ClosedAbove)
@@ -393,15 +380,14 @@ namespace TradeApp.Service
             //if it crossed downward, it's a down setup
             if (OldCandle.ClosedAbove && CurrentCandle.ClosedUnder)
             {
-                result = new Setups(CurrentCandle.CloseTime, (int)SetupType.down, CurrentCandle.Low,CurrentCandle.Id);
+                result = new Setups(CurrentCandle.CloseTime, (int)SetupType.down, CurrentCandle.Low, CurrentCandle.Id);
                 Immortalize(result);
             }
             //otherwise the setup is null
             return result;
-
         }
 
-        void  ValidateSetup()
+        void ValidateSetup()
         {
             switch (Setup.Type)
             {
@@ -442,11 +428,11 @@ namespace TradeApp.Service
             {
                 case (int)SetupType.up:
                     HighBound = Setup.Confirmation.Signal;
-                    LowBound = Math.Max(HighBound - NNInterval,Wma._Price);
+                    LowBound = Math.Max(HighBound - NNInterval, Wma._Price);
                     break;
                 case (int)SetupType.down:
                     LowBound = Setup.Confirmation.Signal;
-                    HighBound = Math.Min(LowBound + NNInterval,Wma._Price);
+                    HighBound = Math.Min(LowBound + NNInterval, Wma._Price);
                     break;
                 default:
                     break;
@@ -490,7 +476,7 @@ namespace TradeApp.Service
             HighBound = 0;
             LowBound = 0;
 
-            Log(LogEntryImportance.Info, "Reset",true);
+            Log(LogEntryImportance.Info, "Reset", true);
         }
 
         //this is slow because it uses reflection. Think of something else
@@ -624,7 +610,7 @@ namespace TradeApp.Service
 
             TreatNewPriceData(priceData);
         }
-        
+
         [MediatorMessageSink(MediatorMessages.Reset, ParameterType = typeof(string))]
         public void ResetMessageReceived(string message)
         {
@@ -660,27 +646,27 @@ namespace TradeApp.Service
         #region Dispose
 
         ~StrategyService()
-		{
-			// In case the client forgets to call
-			// Dispose , destructor will be invoked for
-			Dispose(false);
-		}
+        {
+            // In case the client forgets to call
+            // Dispose , destructor will be invoked for
+            Dispose(false);
+        }
 
-		protected virtual void Dispose(bool disposing)
-		{
-			if (disposing)
-			{
-				// dispose managed resources
-                
-			}
-			// free native resources
-		}
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                // dispose managed resources
 
-		public void Dispose()
-		{
-			Dispose(true);
-			GC.SuppressFinalize(this);
-		}
+            }
+            // free native resources
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
 
         #endregion
 

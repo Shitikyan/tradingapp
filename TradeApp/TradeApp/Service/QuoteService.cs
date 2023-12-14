@@ -1,9 +1,6 @@
-﻿using Jayrock.Json;
-using log4net;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using TradeApp.ApiClient;
 using TradeApp.ConnectorService;
@@ -15,12 +12,12 @@ using TradeApp.Model;
 
 namespace TradeApp.Service
 {
-    public class QuoteService:ServiceBase
+    public class QuoteService : ServiceBase
     {
-        
+
         private System.Timers.Timer _timer;
 
-        public QuoteService(IExchangeClient exchangeClient):base()
+        public QuoteService(IExchangeClient exchangeClient) : base()
         {
             Client = exchangeClient;
 
@@ -37,7 +34,7 @@ namespace TradeApp.Service
         public int WmaPeriod { get; set; }
         public decimal NNInterval { get; set; }
         public decimal PositionOpeningCost { get; set; }
-        
+
         #endregion
 
         #region Helper Properties
@@ -68,7 +65,7 @@ namespace TradeApp.Service
                 return timeIncrement;
             }
         }
-        
+
         public long TimerMilliseconds
         {
             get
@@ -98,11 +95,11 @@ namespace TradeApp.Service
 
                 _timer.Elapsed += (s, e) =>
                 {
-                    Log(LogEntryImportance.Info,"QuoteBot timer elapsed", true);
-                    
+                    Log(LogEntryImportance.Info, "QuoteBot timer elapsed", true);
+
                     _timer.Stop();
 
-                    Log(LogEntryImportance.Info,"Loading price points...",true);
+                    Log(LogEntryImportance.Info, "Loading price points...", true);
                     //LoadPricePoints();
                     var lastCandleStickResult = Client.GetCandleStick(Last);
                     Last = lastCandleStickResult.Last;
@@ -124,12 +121,12 @@ namespace TradeApp.Service
 
                         Mediator.NotifyColleagues<PriceData>(MediatorMessages.NewPriceData, new PriceData(candleStick, WMAPoints.Last(), true));
                     }
-                    else 
+                    else
                     {
                         Log(LogEntryImportance.Info, "No price points to process", true);
                     }
 
-                    Log(LogEntryImportance.Info, "QuoteBot processing finished",true);
+                    Log(LogEntryImportance.Info, "QuoteBot processing finished", true);
 
                     _timer.Start();
                     Log(LogEntryImportance.Info, "QuoteBot timer reset. Waiting...", true);
@@ -142,8 +139,8 @@ namespace TradeApp.Service
             catch (Exception ex)
             {
                 if (_timer != null)
-                    _timer.Stop();                
-                Log(LogEntryImportance.Error,"There was an error. QuoteBot stopped. \n Details: " + ex.Message, true);
+                    _timer.Stop();
+                Log(LogEntryImportance.Error, "There was an error. QuoteBot stopped. \n Details: " + ex.Message, true);
                 throw;
             }
         }
@@ -158,11 +155,11 @@ namespace TradeApp.Service
 
         public void CatchUpWithConnector()
         {
-            Log(LogEntryImportance.Info, "Catching up with connector...",true);
-            
+            Log(LogEntryImportance.Info, "Catching up with connector...", true);
+
             List<PricePoint> pricePoints = new List<PricePoint>();
-            
-            
+
+
             try
             {
                 #region Fetch Data
@@ -178,11 +175,11 @@ namespace TradeApp.Service
                 {
                     Log(LogEntryImportance.Info, string.Format("  {0} pricePoints retrieved", pricePoints.Count), true);
                 }
-                
+
                 #endregion
-            
+
                 #region Build Candlesticks
-            
+
                 int lastPointIndex = pricePoints.Count - 1;
                 int firstPointIndex = lastPointIndex;
 
@@ -217,7 +214,7 @@ namespace TradeApp.Service
                 data.Reverse();
 
                 #endregion
-                      
+
                 #region Calculate WMA
 
                 List<PricePoint> wma = new List<PricePoint>();
@@ -260,8 +257,8 @@ namespace TradeApp.Service
                 #endregion
 
                 WMAPoints = new FixedSizedQueue<PricePoint>(wma);
-            
-                CandleSticks = new FixedSizedQueue<CandleSticks>(data); 
+
+                CandleSticks = new FixedSizedQueue<CandleSticks>(data);
 
                 Last = PricePoint.DateTimeToUnixTimeNonoseconds(CandleSticks.Last().CloseTime);
 
@@ -285,7 +282,7 @@ namespace TradeApp.Service
             Last = res.Last;
             CandleSticks candleStick = res.CandleStick;
 
-            if(candleStick != null)
+            if (candleStick != null)
                 CandleSticks.Enqueue(candleStick);
         }
 
@@ -343,7 +340,7 @@ namespace TradeApp.Service
         {
             Task task = new Task(() =>
             {
-                
+
                 CatchUpWithConnector();
 
                 Mediator.NotifyColleagues<string>(MediatorMessages.DoneCatchingUpWithConnector, "yo");
@@ -356,10 +353,10 @@ namespace TradeApp.Service
         public void Start(string message)
         {
             Task task = new Task(() =>
-            {               
+            {
                 Run();
 
-                Log(LogEntryImportance.Info, "QuoteBot timer set. Waiting...",true);
+                Log(LogEntryImportance.Info, "QuoteBot timer set. Waiting...", true);
             });
             task.Start();
         }
@@ -374,27 +371,27 @@ namespace TradeApp.Service
 
         #region Dispose
         ~QuoteService()
-		{
-			// In case the client forgets to call
-			// Dispose , destructor will be invoked for
-			Dispose(false);
-		}
+        {
+            // In case the client forgets to call
+            // Dispose , destructor will be invoked for
+            Dispose(false);
+        }
 
-		protected virtual void Dispose(bool disposing)
-		{
-			if (disposing)
-			{
-				// dispose managed resources
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                // dispose managed resources
                 CandleSticks = null;
                 WMAPoints = null;
-			}
-			// free native resources
-		}
+            }
+            // free native resources
+        }
 
-		public void Dispose()
-		{
-			Dispose(true);
-			GC.SuppressFinalize(this);
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
         #endregion
     }

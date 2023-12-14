@@ -1,7 +1,4 @@
-﻿using TradeApp.Infrastructure;
-using TradeApp.ViewModel;
-
-namespace TradeApp.View
+﻿namespace TradeApp.View
 {
 	/// <summary>
 	/// Interaction logic for ControlView.xaml

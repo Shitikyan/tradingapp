@@ -1,14 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TradeApp.DataAccess
 {
-    
-    public partial class Orders:INotifyPropertyChanged
+    public partial class Orders : INotifyPropertyChanged
     {
         //for UI purposes
         bool isSelected;
@@ -23,7 +18,6 @@ namespace TradeApp.DataAccess
                 isSelected = value;
                 OnPropertyChanged("IsSelected");
             }
-
         }
 
         string displayStatus;
@@ -33,10 +27,10 @@ namespace TradeApp.DataAccess
             {
                 return displayStatus;
             }
-            set 
+            set
             {
-                displayStatus=value;
-                OnPropertyChanged("DisplayStatus");           
+                displayStatus = value;
+                OnPropertyChanged("DisplayStatus");
             }
         }
 
@@ -101,6 +95,4 @@ namespace TradeApp.DataAccess
         plbc = 2, //prefer profit/los in base currency
         nompp = 3 //no market price protection
     }
-
-
 }

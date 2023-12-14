@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TradeApp.DataAccess;
+﻿using TradeApp.DataAccess;
 using TradeApp.Infrastructure;
 using TradeApp.Messaging;
 
 namespace TradeApp.ViewModel
 {
-    public class PositionViewViewModel:ViewModelBase
+    public class PositionViewViewModel : ViewModelBase
     {
         public PositionViewViewModel()
         {
@@ -19,11 +14,11 @@ namespace TradeApp.ViewModel
         decimal ongoingContracts;
         public decimal OngoingContracts
         {
-            get 
+            get
             {
                 return ongoingContracts;
             }
-            set 
+            set
             {
                 ongoingContracts = value;
                 base.RaisePropertyChanged(() => this.OngoingContracts);
@@ -64,8 +59,8 @@ namespace TradeApp.ViewModel
         public void UpdateOngoingContracts(decimal ongoingContractsIncrement)
         {
 
-              OngoingContracts += ongoingContractsIncrement;
-            
+            OngoingContracts += ongoingContractsIncrement;
+
         }
 
         [MediatorMessageSink(MediatorMessages.UpdateOrder, ParameterType = typeof(Orders))]

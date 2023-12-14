@@ -1,14 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace TradeApp.Infrastructure
+﻿namespace TradeApp.Infrastructure
 {
     public class ViewModelBase : ObservableObject, IViewModel
     {
 
-        
     }
 }

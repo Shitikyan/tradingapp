@@ -10,15 +10,13 @@ namespace TradeApp.Infrastructure
     /// </summary>
     public class ObservableObject : INotifyPropertyChanged
     {
-
         static readonly Mediator mediator = new Mediator();
 
         public Mediator Mediator
         {
             get { return mediator; }
         }
-        
-        
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         /// <summary>
@@ -42,7 +40,6 @@ namespace TradeApp.Infrastructure
                     PropertyChanged(this, new PropertyChangedEventArgs(property.Name));
                 }
             }
-
         }
     }
 }
